@@ -26,3 +26,16 @@ module.exports = {
     // x: x,
     // calculateSum: calculateSum
 }
+
+function def() {
+    var a = 20;
+}
+ var a = 30;
+// console.log(a);
+
+
+(function abc() {
+  var a = 100;  
+})();
+
+// console.log(a);
