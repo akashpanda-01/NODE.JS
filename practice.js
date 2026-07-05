@@ -82,3 +82,21 @@ let currentLine = 0;
 //     performOperation(secondInteger, secondDecimal, secondString);
 // }
 
+// First, print each vowel in  on a new line. The English vowels are a, e, i, o, and u, and each vowel must be printed in the same order as it appeared in .
+// Second, print each consonant (i.e., non-vowel) in  on a new line in the same order as it appeared in .
+
+function vowelsAndConsonants(s) {
+  const char = "aeiou";
+  for (let ch of s) {
+    if (char.includes(ch.toLowerCase())) {
+      console.log(ch);
+    }
+  }
+  for (let ch of s) {
+    if (!char.includes(ch.toLowerCase())) {
+      console.log(ch);
+    }
+  }
+}
+// vowelsAndConsonants("javAScriptLoop");
+
