@@ -4,7 +4,8 @@
   "description": "Tinder For Developers To Intract",
   "main": "index.js",
   "scripts": {
-    
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
   },
   "keywords": [
     "node.js",
