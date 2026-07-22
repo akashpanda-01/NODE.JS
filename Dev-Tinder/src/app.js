@@ -2,6 +2,36 @@ const express = require("express");
 
 const app = express();
 
+//ADVANCED ROUTING CONCEPTS
+
+app.get("/abc", (req, res) => {
+    res.send("abc Testing");
+});
+
+// Optional (?) Method
+app.get(/^\/ab?c$/, (req, res) => {
+    res.send("abc ? Testing");
+});
+app.get(/^\/a(bc)?d$/, (req, res) => {
+    res.send("abc ? Testing");
+});
+
+//(+) MRTHOD
+app.get(/^\/ab+c$/, (req, res) => {
+    res.send("abc + Testing");
+});
+
+app.get(/^\/a(bc)+d$/, (req, res) => {
+    res.send("abc + Testing");
+});
+
+
+
+
+// app.get(/.*fly$/, (req, res) => {
+//     res.send("Worked");
+// });
+
 // HTTP METHODS
 // app.get("/user", (req, res) => {
 //     res.send("User URL");
