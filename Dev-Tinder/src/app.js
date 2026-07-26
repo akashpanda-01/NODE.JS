@@ -2,6 +2,18 @@ const express = require("express");
 
 const app = express();
 
+// Dynamic API's Handling
+app.get("/user/:userId/:name/:password", (req, res) => {
+    console.log(req.params);
+    res.end("Dynamic Data");
+});
+
+// Getting Query Params
+app.get("/user", (req, res) => {
+    console.log(req.query)
+    res.send({Fname: "A", Lname: "B"});
+});
+
 //ADVANCED ROUTING CONCEPTS
 
 app.get("/abc", (req, res) => {
@@ -12,20 +24,19 @@ app.get("/abc", (req, res) => {
 app.get(/^\/ab?c$/, (req, res) => {
     res.send("abc ? Testing");
 });
+
 app.get(/^\/a(bc)?d$/, (req, res) => {
     res.send("abc ? Testing");
 });
 
 //(+) MRTHOD
 app.get(/^\/ab+c$/, (req, res) => {
-    res.send("abc + Testing");
+    res.send("abc +")
 });
 
 app.get(/^\/a(bc)+d$/, (req, res) => {
-    res.send("abc + Testing");
+    res.send("abc +")
 });
-
-
 
 
 // app.get(/.*fly$/, (req, res) => {

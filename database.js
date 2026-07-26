@@ -51,7 +51,7 @@ async function main() {
   return "Done";
 }
 
-main()
-  .then(console.log)
-  .catch(console.error)
-  .finally(() => client.close());
+// main()
+//   .then(console.log)
+//   .catch(console.error)
+//   .finally(() => client.close());
