@@ -1,67 +1,89 @@
 const express = require("express");
 
 const app = express();
+//ANOTHER WAY HANDLING ROUTE HANDLER
 
-// Route Handling
-app.use("/user", (req, res, next) => {
-    console.log("User 1 Fetched Successfully");
-    res.send("Hello User");
-    next();
-},(req, res) => {
-    console.log("User 2")
-    res.send("Hello User 2");
-});
-
-// Using Next Function Before res.send()
-app.use(
-  "/user",
+// ADDING ARRAY IN MULTIPLE MIDDLEWARES
+app.use("/user", [
   (req, res, next) => {
-    console.log("User 1 Fetched Successfully");
-    next();
-    res.send("Hello User 1");
-  },
-  (req, res) => {
-    console.log("User 2");
-    res.send("Hello User 2");
-  });
-
-app.use(
-  "/user",
-  (req, res, next) => {
-    console.log("User 1 Fetched Successfully");
-    // res.send("Hello User");
+    console.log("User 1");
     next();
   },
-  (req, res, next) => {
-    console.log("User 2");
-    res.send("Hello User 2");
-  },
-  (req, res, next) => {
-    console.log("User 3");
-    res.send("Hello User 2");
-  },
+  [
+    (req, res, next) => {
+      console.log("User 2");
+      next();
+    },
+    (req, res, next) => {
+      console.log("User 3");
+      res.send("Hello User 3");
+    },
+  ],
   (req, res, next) => {
     console.log("User 4");
-    res.send("Hello User 2");
   },
-  (req, res, next) => {
-    console.log("User 5");
-    res.send("Hello User 2");
-  },
-);
+]);
+
+// Route Handling
+// app.use("/user", (req, res, next) => {
+//     console.log("User 1 Fetched Successfully");
+//     res.send("Hello User");
+//     next();
+// },(req, res) => {
+//     console.log("User 2")
+//     res.send("Hello User 2");
+// });
+
+// Using Next Function Before res.send()
+// app.use(
+//   "/user",
+//   (req, res, next) => {
+//     console.log("User 1 Fetched Successfully");
+//     next();
+//     res.send("Hello User 1");
+//   },
+//   (req, res) => {
+//     console.log("User 2");
+//     res.send("Hello User 2");
+//   });
+
+// app.use(
+//   "/user",
+//   (req, res, next) => {
+//     console.log("User 1 Fetched Successfully");
+//     // res.send("Hello User");
+//     next();
+//   },
+//   (req, res, next) => {
+//     console.log("User 2");
+//     res.send("Hello User 2");
+//   },
+//   (req, res, next) => {
+//     console.log("User 3");
+//     res.send("Hello User 2");
+//   },
+//   (req, res, next) => {
+//     console.log("User 4");
+//     res.send("Hello User 2");
+//   },
+//   (req, res, next) => {
+//     console.log("User 5");
+//     res.send("Hello User 2");
+//   },
+// );
 
 // We Can Add as many Route Handler Functions Inside An Array
-app.use("/user", (req, res, next) => {
-    next();
-    res.send("Hello User");
-}, [
-    (req, res) => {
-        console.log("Handler 1 In Array");
-    },
-    (req, res) => {
-        console.log("Handler 2 in Array");
-    }
-])
+// app.use("/user", (req, res, next) => {
+//     next();
+//     res.send("Hello User");
+// }, [
+//     (req, res) => {
+//         console.log("Handler 1 In Array");
+//     },
+//     (req, res) => {
+//         console.log("Handler 2 in Array");
+//     }
+// ]);
 
 // // Dynamic API's Handling
 // app.get("/user/:userId/:name/:password", (req, res) => {
