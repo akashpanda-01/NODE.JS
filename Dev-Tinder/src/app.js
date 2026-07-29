@@ -1,7 +1,9 @@
+// import {adminAuth} from "./auth.js";
+// import express from "express";
 const express = require("express");
-
 const app = express();
-//ANOTHER WAY HANDLING ROUTE HANDLER
+const { adminAuth, userAuth } = require("./auth.js");
+
 
 // ADDING ARRAY IN MULTIPLE MIDDLEWARES
 app.use("/user", [
