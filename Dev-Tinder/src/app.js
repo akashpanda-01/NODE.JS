@@ -8,28 +8,44 @@ const { adminAuth, userAuth } = require("./auth.js");
 
 
 
-
-
-// WHY WE NEED MIDDLEWARES
-app.use("/user/getAllData", (req,  res) => {
-  const token = "xz";
-  const isAuth = token === "xyz";
-  if(isAuth){
-    res.send("All Data");
-  } else {
-    res.status(401).send("Unauthorized");
-  }
-});
-
-app.use("/user/deleteUser", (req,  res) => {
+// AVOIDING WRITTING LOGIC AGAIN AND AGAIN
+app.use("/admin", (req, res, next) => {
   const token = "xyz";
   const isAuth = token === "xyz";
-  if(isAuth){
-    res.send("Deleted User");
-  } else {
+  if(!isAuth){
     res.status(401).send("Unauthorized");
-  }
-})
+  } else {
+    next();
+  };
+});
+
+app.get("/admin/getAllData", (req, res) => {
+  res.send("All Data");
+});
+app.get("/admin/deleteUser", (req, res) => {
+  res.send("Deleted User");
+});
+
+// WHY WE NEED MIDDLEWARES
+// app.use("/user/getAllData", (req,  res) => {
+//   const token = "xz";
+//   const isAuth = token === "xyz";
+//   if(isAuth){
+//     res.send("All Data");
+//   } else {
+//     res.status(401).send("Unauthorized");
+//   }
+// });
+
+// app.use("/user/deleteUser", (req,  res) => {
+//   const token = "xyz";
+//   const isAuth = token === "xyz";
+//   if(isAuth){
+//     res.send("Deleted User");
+//   } else {
+//     res.status(401).send("Unauthorized");
+//   }
+// })
 
 //ANOTHER WAY HANDLING ROUTE HANDLER
 // app.get("/user", (req, res, next) => {
