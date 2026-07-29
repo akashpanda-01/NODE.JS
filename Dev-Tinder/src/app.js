@@ -10,19 +10,38 @@ const { adminAuth, userAuth } = require("./auth.js");
 
 
 
+// WHY WE NEED MIDDLEWARES
+app.use("/user/getAllData", (req,  res) => {
+  const token = "xz";
+  const isAuth = token === "xyz";
+  if(isAuth){
+    res.send("All Data");
+  } else {
+    res.status(401).send("Unauthorized");
+  }
+});
 
+app.use("/user/deleteUser", (req,  res) => {
+  const token = "xyz";
+  const isAuth = token === "xyz";
+  if(isAuth){
+    res.send("Deleted User");
+  } else {
+    res.status(401).send("Unauthorized");
+  }
+})
 
 //ANOTHER WAY HANDLING ROUTE HANDLER
-app.get("/user", (req, res, next) => {
-  console.log("User 1");
-  // res.send("User 1");
-  next();
-});
+// app.get("/user", (req, res, next) => {
+//   console.log("User 1");
+//   // res.send("User 1");
+//   next();
+// });
 
-app.get("/user", (req, res, next) => {
-  console.log("User 2");
-  res.send("User 2");
-});
+// app.get("/user", (req, res, next) => {
+//   console.log("User 2");
+//   res.send("User 2");
+// });
 
 // ADDING ARRAY IN MULTIPLE MIDDLEWARES
 // app.use("/user", [
