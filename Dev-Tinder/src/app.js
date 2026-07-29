@@ -6,25 +6,37 @@ const { adminAuth, userAuth } = require("./auth.js");
 
 
 
-
-
-// AVOIDING WRITTING LOGIC AGAIN AND AGAIN
-app.use("/admin", (req, res, next) => {
-  const token = "xyz";
-  const isAuth = token === "xyz";
-  if(!isAuth){
-    res.status(401).send("Unauthorized");
-  } else {
-    next();
-  };
-});
+// ONE MORE CLEAN WAY
+app.use("/admin", adminAuth);
 
 app.get("/admin/getAllData", (req, res) => {
-  res.send("All Data");
+  res.send("AllData");
 });
 app.get("/admin/deleteUser", (req, res) => {
   res.send("Deleted User");
 });
+
+app.get("/user", userAuth, (req, res) => {
+  res.send("This is like multiple middilewares in one HTTP method");
+});
+
+// AVOIDING WRITTING LOGIC AGAIN AND AGAIN
+// app.use("/admin", (req, res, next) => {
+//   const token = "xyz";
+//   const isAuth = token === "xyz";
+//   if(!isAuth){
+//     res.status(401).send("Unauthorized");
+//   } else {
+//     next();
+//   };
+// });
+
+// app.get("/admin/getAllData", (req, res) => {
+//   res.send("All Data");
+// });
+// app.get("/admin/deleteUser", (req, res) => {
+//   res.send("Deleted User");
+// })
 
 // WHY WE NEED MIDDLEWARES
 // app.use("/user/getAllData", (req,  res) => {
