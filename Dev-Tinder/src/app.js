@@ -5,26 +5,45 @@ const app = express();
 const { adminAuth, userAuth } = require("./auth.js");
 
 
+
+
+
+
+
+
+
+//ANOTHER WAY HANDLING ROUTE HANDLER
+app.get("/user", (req, res, next) => {
+  console.log("User 1");
+  // res.send("User 1");
+  next();
+});
+
+app.get("/user", (req, res, next) => {
+  console.log("User 2");
+  res.send("User 2");
+});
+
 // ADDING ARRAY IN MULTIPLE MIDDLEWARES
-app.use("/user", [
-  (req, res, next) => {
-    console.log("User 1");
-    next();
-  },
-  [
-    (req, res, next) => {
-      console.log("User 2");
-      next();
-    },
-    (req, res, next) => {
-      console.log("User 3");
-      res.send("Hello User 3");
-    },
-  ],
-  (req, res, next) => {
-    console.log("User 4");
-  },
-]);
+// app.use("/user", [
+//   (req, res, next) => {
+//     console.log("User 1");
+//     next();
+//   },
+//   [
+//     (req, res, next) => {
+//       console.log("User 2");
+//       next();
+//     },
+//     (req, res, next) => {
+//       console.log("User 3");
+//       res.send("Hello User 3");
+//     },
+//   ],
+//   (req, res, next) => {
+//     console.log("User 4");
+//   },
+// ]);
 
 // Route Handling
 // app.use("/user", (req, res, next) => {
