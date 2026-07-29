@@ -4,21 +4,34 @@ const express = require("express");
 const app = express();
 const { adminAuth, userAuth } = require("./auth.js");
 
+// ERROR HANDLING
+app.get("/admin", (req, res) => {
+  try {
+    // Always Use Code In try-catch method
+    throw new Error("ksofkoew");
+    res.status(401).send(err);
+  } catch (error) {
+    res.send(error)
+  }
+});
 
+app.use("/admin", (err, req, res, next) => {
+  res.send(err);
+});
 
 // ONE MORE CLEAN WAY
-app.use("/admin", adminAuth);
+// app.use("/admin", adminAuth);
 
-app.get("/admin/getAllData", (req, res) => {
-  res.send("AllData");
-});
-app.get("/admin/deleteUser", (req, res) => {
-  res.send("Deleted User");
-});
+// app.get("/admin/getAllData", (req, res) => {
+//   res.send("AllData");
+// });
+// app.get("/admin/deleteUser", (req, res) => {
+//   res.send("Deleted User");
+// });
 
-app.get("/user", userAuth, (req, res) => {
-  res.send("This is like multiple middilewares in one HTTP method");
-});
+// app.get("/user", userAuth, (req, res) => {
+//   res.send("This is like multiple middilewares in one HTTP method");
+// });
 
 // AVOIDING WRITTING LOGIC AGAIN AND AGAIN
 // app.use("/admin", (req, res, next) => {
