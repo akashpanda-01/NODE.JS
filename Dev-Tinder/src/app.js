@@ -1,23 +1,48 @@
 // import {adminAuth} from "./auth.js";
 // import express from "express";
 const express = require("express");
+const {connectDB} = require("./config/database.js");
 const app = express();
-const { adminAuth, userAuth } = require("./auth.js");
+// const { adminAuth, userAuth } = require("./auth.js");
+
+// GOOD WAY FIRST CONNECT TO DATABASE THEN LISTEN REQUESTS
+connectDB().then(() => {
+  console.log("Connected SuccessFully...");
+  app.listen(3000, () => {
+    console.log("Server Is Listening....")
+  });
+}).catch((error) => {
+  console.log("Error Catched..");
+});
+
+// THIS IS NOT A GOOD WAY BECAUSE OUR CODE LISTENING REQUEST FIRST THEN COONECTING DATABSE.
+// IT SHOULD BE FIRST CONNECT TO DATABASE THEN LISTEN REQUESTS.
+// connectDB().then(() => {
+//   console.log("Connected SuccessFully...");
+// }).catch((error) => {
+//   console.log("Error While Connected");
+// });
+
+// app.listen(3000, () => {
+//   console.log("Server Is Listening....");
+// });
+
+
 
 // ERROR HANDLING
-app.get("/admin", (req, res) => {
-  try {
-    // Always Use Code In try-catch method
-    throw new Error("ksofkoew");
-    res.status(401).send(err);
-  } catch (error) {
-    res.send(error)
-  }
-});
+// app.get("/admin", (req, res) => {
+//   try {
+//     // Always Use Code In try-catch method
+//     throw new Error("ksofkoew");
+//     res.status(401).send(err);
+//   } catch (error) {
+//     res.send(error)
+//   }
+// });
 
-app.use("/admin", (err, req, res, next) => {
-  res.send(err);
-});
+// app.use("/admin", (err, req, res, next) => {
+//   res.send(err);
+// });
 
 // ONE MORE CLEAN WAY
 // app.use("/admin", adminAuth);
@@ -241,6 +266,6 @@ app.use("/admin", (err, req, res, next) => {
 //     res.send("Hello World");
 // });
 
-app.listen(3000, () => {
-  console.log("Server Is Listening....");
-});
+// app.listen(3000, () => {
+//   console.log("Server Is Listening....");
+// });
