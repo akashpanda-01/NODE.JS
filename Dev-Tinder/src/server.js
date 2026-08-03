@@ -1,27 +1,27 @@
 const express = require("express");
-const { connectDB } = require("./config/database.js");
+const connectDB = require("./config/database.js");
+const server = express();
 const User = require("./models/user.js");
-const app = express();
 
-app.post("/signup", async (req, res) => {
+server.post("/signup", (req, res) => {
   const userObj = {
-    firstName: "Radhe",
-    lastName: "Krishna",
-    email: "radhekrishna@gmail.com",
+    firstName: "Virat",
+    lastName: "Kohli",
+    age: "38",
   };
 
   const user = new User(userObj);
-  await user.save();
-  res.send("Saved SuccessFully....");
+
+  user.save();
+
+  res.send("Data Added..");
 });
 
-connectDB()
-  .then(() => {
-    console.log("Connected SuccessFully...");
-    app.listen(3000, () => {
-      console.log("Server Is Listening....");
-    });
-  })
-  .catch((err) => {
-    console.log("Not Connected.. ${err}");
+connectDB().then(() => {
+  console.log("Connected...");
+  server.listen(3000, () => {
+    console.log("Server Listening...");
   });
+}) .catch((error) => {
+  console.log("Not Connected");
+});

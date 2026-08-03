@@ -1,19 +1,23 @@
 // import {adminAuth} from "./auth.js";
 // import express from "express";
 const express = require("express");
-const {connectDB} = require("./config/database.js");
+const connectDB = require("./config/database.js");
 const app = express();
 // const { adminAuth, userAuth } = require("./auth.js");
-
-// GOOD WAY FIRST CONNECT TO DATABASE THEN LISTEN REQUESTS
-connectDB().then(() => {
-  console.log("Connected SuccessFully...");
-  app.listen(3000, () => {
-    console.log("Server Is Listening....")
-  });
-}).catch((error) => {
-  console.log("Error Catched..");
+app.use("/user", (req, res) => {
+  res.send("User Data");
 });
+// GOOD WAY FIRST CONNECT TO DATABASE THEN LISTEN REQUESTS
+connectDB()
+  .then(() => {
+    console.log("Connected SuccessFully...");
+    app.listen(3000, () => {
+      console.log("Server Is Listening....");
+    });
+  })
+  .catch((error) => {
+    console.log("Error Catched..", error);
+  });
 
 // THIS IS NOT A GOOD WAY BECAUSE OUR CODE LISTENING REQUEST FIRST THEN COONECTING DATABSE.
 // IT SHOULD BE FIRST CONNECT TO DATABASE THEN LISTEN REQUESTS.
@@ -26,8 +30,6 @@ connectDB().then(() => {
 // app.listen(3000, () => {
 //   console.log("Server Is Listening....");
 // });
-
-
 
 // ERROR HANDLING
 // app.get("/admin", (req, res) => {
