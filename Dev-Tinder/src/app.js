@@ -1,12 +1,19 @@
-// import {adminAuth} from "./auth.js";
-// import express from "express";
 const express = require("express");
 const connectDB = require("./config/database.js");
 const app = express();
-// const { adminAuth, userAuth } = require("./auth.js");
+
+
 app.use("/user", (req, res) => {
   res.send("User Data");
 });
+
+
+
+
+
+
+
+
 // GOOD WAY FIRST CONNECT TO DATABASE THEN LISTEN REQUESTS
 connectDB()
   .then(() => {
