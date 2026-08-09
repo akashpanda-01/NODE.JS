@@ -24,23 +24,58 @@ server.post("/signup", async (req, res) => {
 
 // Get User By Name
 server.get("/user", async (req, res) => {
-  const userName = req.body.firstName;
+  const name = req.body.firstName;
   try {
-    const users = await User.find({ firstName: userName });
-    res.send(users);
+    const user = await User.findOne({ firstName: name });
+    res.send(user);
   } catch (error) {
-    res.status(401).send(error);
-  }
+    res.status(400).send("Something Went Wrong..");
+  };
+  
 });
 
+// Get All The Users or documents from our Database
 server.get("/feed", async (req, res) => {
   try {
-    const userFeed = await User.find({});
-    res.send(userFeed);
+    const users = await User.find({});
+    if(users.length === 0){
+      res.send("Users Not Found");
+    } else {
+      res.send(users);
+    }
   } catch (error) {
-    res.status(401).send("Error");
-  }
+    res.status(400).send("Something Went Wrong")
+  };
 });
+
+
+// Delete a User Document
+server.delete("/deleteUser", async (req, res) => {
+  console.log("DELETE API HIT");
+  const request = req.body.firstName;
+  try {
+    const deleteUser = await User.deleteOne({firstName: request});
+    if(deleteUser){
+      const allUsers = await User.find({});
+      res.send(allUsers);
+    };
+  } catch (error) {
+    res.status(401).send("Not Deleted");
+  };
+});
+
+server.patch("/updateUser", async (req, res) => {
+  const userId = req.body.userId;
+  const updateReq = req.body;
+  console.log(req.body);
+  console.log(req.body.userId);
+  try{
+    const user = await User.findByIdAndUpdate(userId, updateReq, {returnDocument: "after"});
+    res.send(user);
+  } catch(error){
+    res.status(400).send("Not Updated");
+  };
+})
 
 connectDB()
   .then(() => {
