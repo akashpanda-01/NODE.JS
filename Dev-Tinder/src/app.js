@@ -1,18 +1,51 @@
 const express = require("express");
 const connectDB = require("./config/database.js");
+const User = require("./models/user.js");
 const app = express();
 
+app.use(express.json());
+// app.use("/user", (req, res) => {
+//   res.send("User Data");
+// });
 
-app.use("/user", (req, res) => {
-  res.send("User Data");
+app.post("/user", async (req, res) => {
+  const userData = req.body;
+  const user = new User(userData);
+  try {
+    if(userData.skills?.length > 5){
+      throw new Error("Skills Can not Be More Than 5");
+    };
+    
+    await user.save();
+    res.send("User Saved..");
+  } catch (err) {
+    res.status(401).send(err.message);
+  }
 });
 
+app.patch("/user/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  const data = req.body;
+  try {
+    const ALLOWED_UPDATES = ["about", "gender", "password", "skills"];
 
-
-
-
-
-
+    const isUpdateAllowed = Object.keys(data).every((key) =>
+      ALLOWED_UPDATES.includes(key),
+    );
+    if(!isUpdateAllowed){
+      throw new Error("Update Not Allowed");
+    }
+    if(data.skills?.length > 5){
+      throw new Error("Skills can Not Be More Than 5");
+    }
+    const user = await User.findByIdAndUpdate(userId, data, {
+      runValidators: true,
+    });
+    res.send("Updated SuccessFully");
+  } catch (err) {
+    res.send(err.message);
+  }
+});
 
 // GOOD WAY FIRST CONNECT TO DATABASE THEN LISTEN REQUESTS
 connectDB()
@@ -23,7 +56,7 @@ connectDB()
     });
   })
   .catch((error) => {
-    console.log("Error Catched..", error);
+    console.log("Error Catched..", error.message);
   });
 
 // THIS IS NOT A GOOD WAY BECAUSE OUR CODE LISTENING REQUEST FIRST THEN COONECTING DATABSE.
