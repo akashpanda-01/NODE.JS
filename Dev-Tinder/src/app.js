@@ -10,12 +10,18 @@ app.use(express.json());
 
 app.post("/user", async (req, res) => {
   const userData = req.body;
-  const user = new User(userData);
   try {
-    if(userData.skills?.length > 5){
+    if(!userData.firstName){
+      throw new Error("Please Provide FirstName");
+    };
+    // if(!userData.emailId){
+    //   throw new Error("Please Provide EmailId");
+    // }
+    if (userData.skills?.length > 5) {
       throw new Error("Skills Can not Be More Than 5");
     };
-    
+
+    const user = new User(userData);
     await user.save();
     res.send("User Saved..");
   } catch (err) {
@@ -32,10 +38,10 @@ app.patch("/user/:userId", async (req, res) => {
     const isUpdateAllowed = Object.keys(data).every((key) =>
       ALLOWED_UPDATES.includes(key),
     );
-    if(!isUpdateAllowed){
+    if (!isUpdateAllowed) {
       throw new Error("Update Not Allowed");
     }
-    if(data.skills?.length > 5){
+    if (data.skills?.length > 5) {
       throw new Error("Skills can Not Be More Than 5");
     }
     const user = await User.findByIdAndUpdate(userId, data, {
