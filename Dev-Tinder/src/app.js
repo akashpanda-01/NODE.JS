@@ -2,24 +2,77 @@ const express = require("express");
 const connectDB = require("./config/database.js");
 const User = require("./models/user.js");
 const app = express();
+const validator = require("validator");
+const bcrypt = require("bcrypt");
+const validationSignUpData = require("./utils/validation.js");
 
 app.use(express.json());
 // app.use("/user", (req, res) => {
 //   res.send("User Data");
 // });
+app.get("/profile", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+  } catch (error) {
+    res.send(error.message);
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { password, emailId } = req.body;
+    if (!validator.isEmail(emailId) && password) {
+      throw new Error("Please Enter Valid Email ID or Password");
+    }
+    const user = await User.findOne({ emailId: emailId });
+    if (!user) {
+      throw new Error("User Not Found");
+    }
+    const isPasswordValid = await bcrypt.compare(user.password);
+    if (isPasswordValid) {
+      res.send(user);
+    } else {
+      throw new Error("Invalid Credentials");
+    }
+  } catch (error) {
+    res.send("Something Went Wrong" + error.message);
+  }
+});
+
+app.post("/signup", async (req, res) => {
+  try {
+    const { firstName, lastName, emailId, password } = req.body;
+
+    validationSignUpData(req);
+
+    const passwordHash = await bcrypt.hash(password, 5);
+
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: passwordHash,
+    });
+
+    await user.save();
+    res.send("Signup SuccessFully");
+  } catch (error) {
+    throw new Error("Something Went Worng" + error.message);
+  }
+});
 
 app.post("/user", async (req, res) => {
   const userData = req.body;
   try {
-    if(!userData.firstName){
+    if (!userData.firstName) {
       throw new Error("Please Provide FirstName");
-    };
+    }
     // if(!userData.emailId){
     //   throw new Error("Please Provide EmailId");
     // }
     if (userData.skills?.length > 5) {
       throw new Error("Skills Can not Be More Than 5");
-    };
+    }
 
     const user = new User(userData);
     await user.save();

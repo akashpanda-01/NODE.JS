@@ -2,19 +2,31 @@ const express = require("express");
 const connectDB = require("./config/database.js");
 const server = express();
 const User = require("./models/user.js");
+const bcrypt = require("bcrypt");
 
 server.use(express.json());
 
 server.post("/signup", async (req, res) => {
+  try {
+    const {firstName, lastName, about, password, age, emailId, skills}= req.body;
   // console.log(req.body);
   // const userObj = {
   //   firstName: "Virat",
   //   lastName: "Kohli",
   //   age: "38",
   // };
-  const user = new User(req.body);
+  const passwordHash = await bcrypt.hash(password, 5);
+  // console.log(passwordHash);
+  const user = new User({
+    firstName,
+    lastName,
+    emailId,
+    password: passwordHash,
+    age,
+    skills,
+  });
 
-  try {
+  
     await user.save();
     res.send("Data Added..");
   } catch (error) {
