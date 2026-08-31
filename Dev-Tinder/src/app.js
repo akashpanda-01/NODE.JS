@@ -4,15 +4,33 @@ const User = require("./models/user.js");
 const app = express();
 const validator = require("validator");
 const bcrypt = require("bcrypt");
-const validationSignUpData = require("./utils/validation.js");
+const { validationSignUpData } = require("./utils/validation.js");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 app.use(express.json());
+app.use(cookieParser());
 // app.use("/user", (req, res) => {
 //   res.send("User Data");
 // });
 app.get("/profile", async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const cookies = req.cookies;
+    const { token } = cookies;
+    if (!token) {
+      throw new Error("Token Invalid");
+    };
+
+    const decoddedMessage = await jwt.verify(token, "DevTinder@123")
+    if(!decoddedMessage){
+      throw new Error("Token Not Verified");
+    };
+
+    const {_id} = decoddedMessage;
+
+    const user = await User.findById(_id);
+
+    res.send(user);
   } catch (error) {
     res.send(error.message);
   }
@@ -28,20 +46,24 @@ app.post("/login", async (req, res) => {
     if (!user) {
       throw new Error("User Not Found");
     }
-    const isPasswordValid = await bcrypt.compare(user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (isPasswordValid) {
-      res.send(user);
+      const token = await jwt.sign({ _id: user._id }, "DevTinder@123");
+
+      res.cookie("token", token);
+      res.send("LooggedIn SuccessFull");
     } else {
       throw new Error("Invalid Credentials");
     }
   } catch (error) {
-    res.send("Something Went Wrong" + error.message);
+    res.send("Something Went Wrong " + error.message);
   }
 });
 
 app.post("/signup", async (req, res) => {
   try {
-    const { firstName, lastName, emailId, password } = req.body;
+    const { firstName, lastName, emailId, password, gender, about, skills } =
+      req.body;
 
     validationSignUpData(req);
 
@@ -52,6 +74,9 @@ app.post("/signup", async (req, res) => {
       lastName,
       emailId,
       password: passwordHash,
+      about,
+      skills,
+      gender,
     });
 
     await user.save();
