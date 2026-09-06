@@ -1,90 +1,99 @@
 const express = require("express");
+const app = express();
 const connectDB = require("./config/database.js");
 const User = require("./models/user.js");
-const app = express();
-const validator = require("validator");
-const bcrypt = require("bcrypt");
-const { validationSignUpData } = require("./utils/validation.js");
 const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
-
+const { authRouter } = require("./routes/auth.js");
+const { profileRouter } = require("./routes/profile.js");
+// const validator = require("validator");
+// const bcrypt = require("bcrypt");
+// const jwt = require("jsonwebtoken");
+// const {userAuth} = require("./auth.js");
 app.use(express.json());
 app.use(cookieParser());
+
+app.use("/", authRouter);
+app.use("/", profileRouter);
+
 // app.use("/user", (req, res) => {
 //   res.send("User Data");
 // });
-app.get("/profile", async (req, res) => {
-  try {
-    const cookies = req.cookies;
-    const { token } = cookies;
-    if (!token) {
-      throw new Error("Token Invalid");
-    };
 
-    const decoddedMessage = await jwt.verify(token, "DevTinder@123")
-    if(!decoddedMessage){
-      throw new Error("Token Not Verified");
-    };
+// app.post("/sentConnectionRequest",userAuth, async (req, res) => {
+//   const user = req.user;
+//   console.log("Request Sent SuccessFully");
+//   res.send(user.firstName + " Sent Request");
+// })
 
-    const {_id} = decoddedMessage;
+// app.get("/profile",userAuth, async (req, res) => {
+//   try {
+//     const user = req.user;
+//     // const cookies = req.cookies;
+//     // const { token } = cookies;
+//     // if (!token) {
+//     //   throw new Error("Token Invalid");
+//     // };
+//     // const decoddedMessage = await jwt.verify(token, "DevTinder@123")
+//     // if(!decoddedMessage){
+//     //   throw new Error("Token Not Verified");
+//     // };
+//     // const {_id} = decoddedMessage;
+//     // const user = await User.findById(_id);
+//     res.send(user);
+//   } catch (error) {
+//     res.status(400).send(error.message);
+//   }
+// });
 
-    const user = await User.findById(_id);
+// app.post("/login", async (req, res) => {
+//   try {
+//     const { password, emailId } = req.body;
+//     if (!validator.isEmail(emailId) && password) {
+//       throw new Error("Please Enter Valid Email ID or Password");
+//     }
+//     const user = await User.findOne({ emailId: emailId });
+//     if (!user) {
+//       throw new Error("User Not Found");
+//     }
+//     const isPasswordValid = await user.validatePassword(password);
+//     if (isPasswordValid) {
+//       const token = await user.getJWT();
 
-    res.send(user);
-  } catch (error) {
-    res.send(error.message);
-  }
-});
+//       res.cookie("token", token);
+//       res.send("LooggedIn SuccessFull");
+//     } else {
+//       throw new Error("Invalid Credentials");
+//     }
+//   } catch (error) {
+//     res.send("Something Went Wrong " + error.message);
+//   }
+// });
 
-app.post("/login", async (req, res) => {
-  try {
-    const { password, emailId } = req.body;
-    if (!validator.isEmail(emailId) && password) {
-      throw new Error("Please Enter Valid Email ID or Password");
-    }
-    const user = await User.findOne({ emailId: emailId });
-    if (!user) {
-      throw new Error("User Not Found");
-    }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (isPasswordValid) {
-      const token = await jwt.sign({ _id: user._id }, "DevTinder@123");
+// app.post("/signup", async (req, res) => {
+//   try {
+//     const { firstName, lastName, emailId, password, gender, about, skills } =
+//       req.body;
 
-      res.cookie("token", token);
-      res.send("LooggedIn SuccessFull");
-    } else {
-      throw new Error("Invalid Credentials");
-    }
-  } catch (error) {
-    res.send("Something Went Wrong " + error.message);
-  }
-});
+//     validationSignUpData(req);
 
-app.post("/signup", async (req, res) => {
-  try {
-    const { firstName, lastName, emailId, password, gender, about, skills } =
-      req.body;
+//     const passwordHash = await bcrypt.hash(password, 5);
 
-    validationSignUpData(req);
+//     const user = new User({
+//       firstName,
+//       lastName,
+//       emailId,
+//       password: passwordHash,
+//       about,
+//       skills,
+//       gender,
+//     });
 
-    const passwordHash = await bcrypt.hash(password, 5);
-
-    const user = new User({
-      firstName,
-      lastName,
-      emailId,
-      password: passwordHash,
-      about,
-      skills,
-      gender,
-    });
-
-    await user.save();
-    res.send("Signup SuccessFully");
-  } catch (error) {
-    throw new Error("Something Went Worng" + error.message);
-  }
-});
+//     await user.save();
+//     res.send("Signup SuccessFully");
+//   } catch (error) {
+//     throw new Error("Something Went Worng" + error.message);
+//   }
+// });
 
 app.post("/user", async (req, res) => {
   const userData = req.body;
