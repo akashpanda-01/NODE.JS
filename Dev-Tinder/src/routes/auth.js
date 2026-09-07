@@ -23,37 +23,63 @@ authRouter.post("/signup", async (req, res) => {
       skills,
     });
 
+    const token = await user.getJWT();
+
+    if (!token) {
+      throw new Error("Not Valid Token");
+    }
+
     await user.save();
-    res.send("Signup SuccessFully");
+
+    const userIs = await User.findOne({ emailId: emailId });
+    if (!userIs) {
+      throw new Error("User Not Found");
+    }
+
+    res.cookie("token", token);
+    res.send("Signup SuccessFully " + userIs);
   } catch (err) {
-    throw new Error("Something Went Worng" + error.message);
+    throw new Error("Something Went Worng" + err.message);
   }
 });
 
 authRouter.post("/login", async (req, res) => {
-    try {
-        const {emailId, password} = req.body;
-        const user = await User.findOne({emailId: emailId});
-        const isPasswordValid = user.validatePassword(password);
-        if(isPasswordValid){
-            const token = await user.getJWT();
-            if(!token){
-                throw new Error("Invalid Token")
-            }
-            res.cookie("token", token);
-            res.send("Loggin SuccessFull");
-        } else {
-            throw new Error("Invalid Credentials");
-        }
-    } catch (err) {
-        throw new Error("Something went Wrong "+ err.message);;
-    };
+  try {
+    const { emailId, password } = req.body;
+
+    const user = await User.findOne({ emailId: emailId });
+
+    if (!user) {
+      throw new Error("Invalid Credentials");
+    }
+
+    const isPasswordValid = await user.validatePassword(password);
+
+    if (isPasswordValid) {
+    
+      const token = await user.getJWT();
+      if (!token) {
+        throw new Error("Invalid Token");
+      };
+
+      res.cookie("token", token);
+      res.send("Loggin SuccessFull");
+
+    } else {
+      throw new Error("Invalid Credentials");
+    }
+    
+  } catch (err) {
+    throw new Error("Something went Wrong " + err.message);
+  }
 });
 
 authRouter.post("/logout", (req, res) => {
-    res.cookie("token", null, {
-        expires: new Date(Date.now())
-    }).send("Logout Successfully");
+  res
+    .cookie("token", null, {
+      expires: new Date(Date.now()),
+    })
+    .send("Logout Successfully");
 });
 
 module.exports = {

@@ -6,6 +6,7 @@ const {
   validateProfilePassword,
 } = require("../utils/validation.js");
 const bcrypt = require("bcrypt");
+const validator = require("validator");
 
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
@@ -37,30 +38,40 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   }
 });
 
+
+
 profileRouter.patch("/profile/password", userAuth, async (req, res) => {
   try {
     const user = req.user;
-    if (validateProfilePassword(req)) {
-      const requestPassword = req.body;
-      const newPasswordHash = await bcrypt.hash(requestPassword, 5);
-      if (!newPasswordHash) {
-        throw new Error("Password Not Hashed");
-      }
-      const userPasswordHash = user.password;
-      userPasswordHash = newPasswordHash;
-      await userPasswordHash.save();
-      res.send("Password Updated..");
 
-      // const isPasswordValid = await user.validatePassword(requestPassword);
-      // if(isPasswordValid){
-      //     const userPasswordHash = user.password;
+    validateProfilePassword(req);
 
-      // }
-    } else {
-      throw new Error("Password Not Valid");
+    const { currentPassword, newPassword } = req.body;
+
+    const isCurrentPasswordValid = await user.validatePassword(currentPassword);
+
+    if(!isCurrentPasswordValid){
+      throw new Error("Current Password is Incorrect");
     }
+
+    const newPasswordHash = await bcrypt.hash(newPassword, 5);
+
+    if(!validator.isStrongPassword(newPassword)){
+      throw new Error("New password is not strong enough");
+    };
+
+    if (!newPasswordHash) {
+      throw new Error("Password Not Hashed");
+    }
+
+    user.password = newPasswordHash;
+    
+    await user.save();
+
+    res.send("Password Updated..");
+
   } catch (err) {
-    throw new Error("Something Went Wrong " + err.message);
+    res.status(400).send("Something Went Wrong " + err.message);
   }
 });
 

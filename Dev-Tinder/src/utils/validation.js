@@ -27,10 +27,20 @@ const validateEditProfileData = (req) => {
 };
 
 const validateProfilePassword = (req) => {
-  const password = req.body;
-  if(!validate.isEmail(password) && !validate.isStrongPassword(password)){
-    throw new Error("Not a Valid or Strong Password");
+  const {newPassword, currentPassword} = req.body;
+  
+  if (!currentPassword) {
+    throw new Error("Current Password is required");
   };
+
+  if (!newPassword) {
+    throw new Error("New Password is required");
+  };
+
+  if(!validator.isStrongPassword(newPassword)){
+    throw new Error("Not a Valid or Strong Password or emailId");
+  };
+  return true;
 }
 module.exports = {
   validationSignUpData,
