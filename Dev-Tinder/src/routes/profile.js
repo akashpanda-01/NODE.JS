@@ -38,42 +38,72 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   }
 });
 
-
-
 profileRouter.patch("/profile/password", userAuth, async (req, res) => {
   try {
     const user = req.user;
+    const { currentPassword, newPassword} = req.body;
 
     validateProfilePassword(req);
 
-    const { currentPassword, newPassword } = req.body;
-
-    const isCurrentPasswordValid = await user.validatePassword(currentPassword);
-
-    if(!isCurrentPasswordValid){
-      throw new Error("Current Password is Incorrect");
-    }
-
-    const newPasswordHash = await bcrypt.hash(newPassword, 5);
-
-    if(!validator.isStrongPassword(newPassword)){
-      throw new Error("New password is not strong enough");
+    if(!password){
+      throw new Error("Password Not Found");
     };
 
-    if (!newPasswordHash) {
-      throw new Error("Password Not Hashed");
-    }
+    const isCurrentPasswordValid = await user.validatePassword(currentPassword);
+    if(!isCurrentPasswordValid){
+      throw new Error("Wrong Current Password");
+    };
+
+    const newPasswordHash = await bcrypt.hash(newPassword, 5);
+    if(!newPasswordHash){
+      throw new Error("Not Hashed..");
+    };
 
     user.password = newPasswordHash;
-    
+
     await user.save();
 
-    res.send("Password Updated..");
+    res.send("Password Updated SuccessFully");
 
   } catch (err) {
-    res.status(400).send("Something Went Wrong " + err.message);
+    res.status(400).json({message: "Something Went Wrong" + err.message });
   }
-});
+})
+
+// profileRouter.patch("/profile/password", userAuth, async (req, res) => {
+//   try {
+//     const user = req.user;
+
+//     validateProfilePassword(req);
+
+//     const { currentPassword, newPassword } = req.body;
+
+//     const isCurrentPasswordValid = await user.validatePassword(currentPassword);
+
+//     if(!isCurrentPasswordValid){
+//       throw new Error("Current Password is Incorrect");
+//     }
+
+//     const newPasswordHash = await bcrypt.hash(newPassword, 5);
+
+//     if(!validator.isStrongPassword(newPassword)){
+//       throw new Error("New password is not strong enough");
+//     };
+
+//     if (!newPasswordHash) {
+//       throw new Error("Password Not Hashed");
+//     }
+
+//     user.password = newPasswordHash;
+    
+//     await user.save();
+
+//     res.send("Password Updated..");
+
+//   } catch (err) {
+//     res.status(400).send("Something Went Wrong " + err.message);
+//   }
+// });
 
 module.exports = {
   profileRouter,
