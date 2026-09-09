@@ -5,6 +5,7 @@ const User = require("./models/user.js");
 const cookieParser = require("cookie-parser");
 const { authRouter } = require("./routes/auth.js");
 const { profileRouter } = require("./routes/profile.js");
+const { requestRouter} = require("./routes/request.js");
 // const validator = require("validator");
 // const bcrypt = require("bcrypt");
 // const jwt = require("jsonwebtoken");
@@ -14,6 +15,7 @@ app.use(cookieParser());
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
+app.use("/", requestRouter);
 
 // app.use("/user", (req, res) => {
 //   res.send("User Data");

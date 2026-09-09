@@ -6,7 +6,6 @@ const {
   validateProfilePassword,
 } = require("../utils/validation.js");
 const bcrypt = require("bcrypt");
-const validator = require("validator");
 
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
@@ -38,6 +37,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   }
 });
 
+
 profileRouter.patch("/profile/password", userAuth, async (req, res) => {
   try {
     const user = req.user;
@@ -45,9 +45,9 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
 
     validateProfilePassword(req);
 
-    if(!password){
-      throw new Error("Password Not Found");
-    };
+    // if(!password){
+    //   throw new Error("Password Not Found");
+    // };
 
     const isCurrentPasswordValid = await user.validatePassword(currentPassword);
     if(!isCurrentPasswordValid){

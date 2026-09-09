@@ -27,21 +27,39 @@ const validateEditProfileData = (req) => {
 };
 
 const validateProfilePassword = (req) => {
-  const {newPassword, currentPassword} = req.body;
-  
+  const { newPassword, currentPassword } = req.body;
+
   if (!currentPassword) {
     throw new Error("Current Password is required");
-  };
+  }
 
   if (!newPassword) {
     throw new Error("New Password is required");
+  }
+
+  if (!validator.isStrongPassword(newPassword)) {
+    throw new Error("Not a Valid or Strong Password or emailId");
+  }
+  return true;
+};
+
+const validateRequestData = (req) => {
+  const fromUserId = req.user._id;
+  const toUserId = req.params.toUserId;
+  const status = req.params.status;
+
+  if(!fromUserId || !toUserId){
+    throw new Error("Not Find toUserId or fromUserId");
   };
 
-  if(!validator.isStrongPassword(newPassword)){
-    throw new Error("Not a Valid or Strong Password or emailId");
+  const allowedStatus = ["ignore", "intrested"];
+
+  if(!allowedStatus.includes(status)){
+    return res.status(400).json({message: "Invalid Status Type "+ status});
   };
-  return true;
-}
+
+
+};
 module.exports = {
   validationSignUpData,
   validateEditProfileData,
