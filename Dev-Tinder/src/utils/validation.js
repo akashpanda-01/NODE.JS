@@ -43,25 +43,26 @@ const validateProfilePassword = (req) => {
   return true;
 };
 
-const validateRequestData = (req) => {
+const validateRequestData = (req, res) => {
   const fromUserId = req.user._id;
   const toUserId = req.params.toUserId;
   const status = req.params.status;
+  console.log(status);
 
   if(!fromUserId || !toUserId){
     throw new Error("Not Find toUserId or fromUserId");
   };
 
-  const allowedStatus = ["ignore", "intrested"];
+  const allowedStatus = ["ignored", "interested"];
 
   if(!allowedStatus.includes(status)){
     return res.status(400).json({message: "Invalid Status Type "+ status});
   };
-
 
 };
 module.exports = {
   validationSignUpData,
   validateEditProfileData,
   validateProfilePassword,
+  validateRequestData
 };

@@ -15,7 +15,7 @@ const connectionRequestSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: {
-        values: ["ignore", "interested"],
+        values: ["ignored", "interested", "accepted", "rejected"],
       },
     },
   },
@@ -24,7 +24,18 @@ const connectionRequestSchema = new mongoose.Schema(
   },
 );
 
-const ConnectionRequestModel = mongoose.model(
+connectionRequestSchema.index({firstName: 1, toUserId: 1}); // Compound
+
+connectionRequestSchema.pre("save", function(next){
+  const connectionRequest = this;
+  
+  if(connectionRequest.fromUserId.equals(connectionRequest.toUserId)){
+    throw new Error("Cannot send Request To Yourself..");
+  };
+  next;
+});
+
+const ConnectionRequestModel = new mongoose.model(
   "ConnectionRequest",
   connectionRequestSchema,
 );
