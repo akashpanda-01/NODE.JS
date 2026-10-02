@@ -60,6 +60,9 @@ requestRouter.post(
         return res.status(404).json({ message: "Invalid Status Type" }, status);
       }
 
+      const data1 = await ConnectionRequest.find({});
+      console.log(data1); 
+
       const connectionRequest = await ConnectionRequest.findOne({
         _id: requestId,
         toUserId: loggedInUser,
@@ -75,7 +78,7 @@ requestRouter.post(
       res.json({message: `Request ${data.status}`}, data);
 
     } catch (err) {
-      res.status(404).json({ message: "Something Went Wrong" }, err.message);
+      res.status(404).json({ message: "Something Went Wrong"}, err.message);
     }
   },
 );
